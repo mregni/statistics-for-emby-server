@@ -7,19 +7,52 @@
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
     <div data-role="page" class="page type-interior pluginConfigurationPage statisticsConfigurationPage" data-require="emby-button,emby-select">
         <div data-role="content">
-            <div class="content-primary" style="max-width: 900px;">
+            <div class="content-primary">
                 <h1>Statistics plugin</h1>
                 <p id="statsIntro">
-                    This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" time. It will only count as 1. Last statistics finished at
+                    This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" count. It will only count as 1. Last statistics finished at
                 </p>
-                <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToUserStats">View user-based statistics</button>
-                <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToShowProgress">View user-based show progress</button>
-                <h2 id="GeneralTitle"></h2>
-                <div id="statCard-stats">
-                    <div class="statRow" id="generalStat"></div>
+
+                <div style="max-width: 900px;">
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToUserStats">View user-based statistics</button>
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToShowProgress">View user-based show progress</button>
                 </div>
-                <div style="clear: both;"></div>
-                <svg id="week"></svg>
+
+                <div class="dashboardSections">
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>General statistics</h2>
+                            <div class="statRow" id="generalStat"></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>Movie statistics</h2>
+                            <div class="statRow" id="movieStat"></div>
+                            <div style="clear: both;"></div>
+                            <h3>Movies watched per weekday</h3>
+                            <canvas id="weekMovieChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="dashboardSections">
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>Show Statistics</h2>
+                            <div class="statRow" id="showStat"></div>
+                            <div style="clear: both;"></div>
+                            <h3>Episodes watched per weekday</h3>
+                            <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -38,9 +71,9 @@
                 font-weight: 500;
             }
 
-            .statCard-stats-number table {
-                width: 100%;
-            }
+                .statCard-stats-number table {
+                    width: 100%;
+                }
 
             .small .statCard .statCard-stats-number {
                 text-align: center;
@@ -160,7 +193,7 @@
             (function () {
                 require.config({
                     paths: {
-                        d3: "https://d3js.org/d3.v3.min"
+                        chart: "http://www.chartjs.org/dist/2.6.0/Chart.bundle"
                     },
                     waitSeconds: 2
                 });
@@ -168,6 +201,28 @@
                 var MainPage = {
                     pluginId: '291d866f-baad-464a-aed6-a4a8b95a8fd7',
                     tvdbCallFailed: false,
+                    createStat: function (i, v) {
+                        var html = '<div class="col ' +
+                            v.Size +
+                            '"><div class="statCard"><div class="statCard-content">';
+
+                        if (v.ExtraInformation !== undefined)
+                            html += "<div class=\"infoBlock\" onclick=\"showInfo('" +
+                                v.ExtraInformation +
+                                "', '" +
+                                v.Title +
+                                "');\"><i class=\"md-icon\">info_outline</i></div>";
+
+                        html += '<div class="statCard-stats-title">' +
+                            v.Title +
+                            '</div><div class="statCard-stats-number inside">' +
+                            v.ValueLineOne +
+                            '</div><div class="statCard-stats-number inside">' +
+                            v.ValueLineTwo +
+                            '</div></div></div></div>';
+
+                        return html;
+                    },
                     loadStats: function (page) {
                         Dashboard.showLoadingMsg();
 
@@ -175,7 +230,7 @@
                             if (config.LastUpdated === undefined) {
                                 Dashboard.alert({
                                     message:
-                                        'No configuration found, please run the statistics task on the Scheduled Tasks page and come back for the results.'
+                                    'No configuration found, please run the statistics task on the Scheduled Tasks page and come back for the results.'
                                 });
                                 $('#GoToUserStats', page).css("display", "none");
                                 $('#GoToShowProgress', page).css("display", "none");
@@ -185,141 +240,72 @@
                                 MainPage.tvdbCallFailed = config.IsTheTvdbCallFailed;
 
                                 $("#statsIntro", page).append('<b>' + config.LastUpdated + '</b>');
-                                $("#GeneralTitle", page).html("General statistics");
                                 //MainPage.buildChart(config.Charts[0].Week, "");
 
                                 $.each(config.GeneralStat,
                                     function (i, v) {
-                                        var html = '<div class="col ' +
-                                            v.Size +
-                                            '"><div class="statCard"><div class="statCard-content">';
-
-                                        if (v.ExtraInformation !== undefined)
-                                            html += "<div class=\"infoBlock\" onclick=\"showInfo('" +
-                                                v.ExtraInformation +
-                                                "', '" +
-                                                v.Title +
-                                                "');\"><i class=\"md-icon\">info_outline</i></div>";
-
-                                        html += '<div class="statCard-stats-title">' +
-                                            v.Title +
-                                            '</div><div class="statCard-stats-number inside">' +
-                                            v.ValueLineOne +
-                                            '</div><div class="statCard-stats-number inside">' +
-                                            v.ValueLineTwo +
-                                            '</div></div></div></div>';
-
+                                        var html = MainPage.createStat(i, v);
                                         $("#generalStat", page).append(html);
                                     });
 
+                                $.each(config.MovieStat,
+                                    function (i, v) {
+                                        var html = MainPage.createStat(i, v);
+                                        $("#movieStat", page).append(html);
+                                    });
+
+
+                                $.each(config.ShowStat,
+                                    function (i, v) {
+                                        var html = MainPage.createStat(i, v);
+                                        $("#showStat", page).append(html);
+                                    });
+
+                                var keys = [];
+                                var movies = [];
+                                var episodes = [];
+                                $.each(config.Charts[0].Week, function (i, v) {
+                                    keys.push(v.Key);
+                                    movies.push(v.Movies);
+                                    episodes.push(v.Episodes);
+                                });
+
+                                MainPage.buildChart(keys, movies, '# of views per day', 'weekMovieChart');
+                                MainPage.buildChart(keys, episodes, '# of views per day', 'weekEpisodesChart');
                                 Dashboard.hideLoadingMsg();
                             }
                         });
                     },
-                    buildChart(data, div) {
-                        require(["d3"],
-                            function (d3) {
-                                var fillColor = "black";
-                                var color = $(".backgroundContainer").css("background-color");
-                                if (color === "rgb(24, 24, 24)")
-                                    fillColor = "white";
-
-
-                                //d3.selectAll(div + " > *").remove();
-                                console.log(data);
-
-                                var margin = { top: 50, right: 10, bottom: 30, left: 40 },
-                                    width = 900 - margin.left - margin.right,
-                                    height = 400 - margin.top - margin.bottom;
-
-                                var x = d3.scale.ordinal()
-                                    .rangeRoundBands([0, width], .1);
-
-                                var y = d3.scale.linear()
-                                    .rangeRound([height, 0]);
-
-                                var color = d3.scale.ordinal()
-                                    .range(["#52B54B", "#673AB7"]);
-
-                                var xAxis = d3.svg.axis()
-                                    .scale(x)
-                                    .orient("bottom");
-
-                                var yAxis = d3.svg.axis()
-                                    .scale(y)
-                                    .orient("left")
-                                    .tickFormat(d3.format(".2s"));
-
-                                var svg = d3.select("svg#week")
-                                    .attr("width", width + margin.left + margin.right)
-                                    .attr("height", height + margin.top + margin.bottom)
-                                    .append("g")
-                                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                                color.domain(d3.keys(data[0]).filter(function (key) { return key !== "Key"; }));
-
-                                data.forEach(function (d) {
-                                    var y0 = 0;
-                                    d.media = color.domain().map(function (name) { return { name: name, y0: y0, y1: y0 += +d[name] }; });
-                                    d.total = d.media[d.media.length - 1].y1;
+                    buildChart(keys, data, title, div) {
+                        require(["chart"],
+                            function (Chart) {
+                                var colors = [];
+                                $.each(data, function (i, v) {
+                                    colors.push('rgba(82, 181, 75, 1)');
+                                })
+                                var ctx = document.getElementById(div);
+                                var myBarChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: keys,
+                                        datasets: [{
+                                            label: title,
+                                            data: data,
+                                            backgroundColor: colors,
+                                            borderColor: colors,
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero: true
+                                                }
+                                            }]
+                                        }
+                                    }
                                 });
-
-                                x.domain(data.map(function (d) { return d.Key; }));
-                                y.domain([0, d3.max(data, function (d) { return d.total; })]);
-
-                                svg.append("g")
-                                    .attr("class", "x axis")
-                                    .attr("transform", "translate(0," + height + ")")
-                                    .attr("fill", fillColor)
-                                    .attr("height", 1)
-                                    .call(xAxis);
-
-                                svg.append("g")
-                                    .attr("class", "y axis")
-                                    .attr("fill", fillColor)
-                                    .call(yAxis)
-                                    .append("text")
-                                    .attr("transform", "rotate(-90)")
-                                    .attr("y", 6)
-                                    .attr("dy", ".71em")
-                                    .style("text-anchor", "end")
-                                    .attr("fill", fillColor)
-                                    .text("Views");
-
-                                var state = svg.selectAll(".g")
-                                    .data(data)
-                                    .enter().append("g")
-                                    .attr("class", "g")
-                                    .attr("fill", fillColor)
-                                    .attr("transform", function (d) { return "translate(" + x(d.Key) + ",0)"; });
-
-                                state.selectAll("rect")
-                                    .data(function (d) { return d.media; })
-                                    .enter().append("rect")
-                                    .attr("width", x.rangeBand())
-                                    .attr("y", function (d) { return y(d.y1); })
-                                    .attr("height", function (d) { return y(d.y0) - y(d.y1); })
-                                    .style("fill", function (d) { return color(d.name); });
-
-                                var legend = svg.selectAll(".legend")
-                                    .data(color.domain().slice().reverse())
-                                    .enter().append("g")
-                                    .attr("transform", function (d, i) { return "translate(0," + (i * 20 - 50) + ")"; });
-
-                                legend.append("rect")
-                                    .attr("x", width - 18)
-                                    .attr("width", 18)
-                                    .attr("height", 18)
-                                    .style("fill", color);
-
-                                legend.append("text")
-                                    .attr("x", width - 24)
-                                    .attr("y", 9)
-                                    .attr("dy", ".35em")
-                                    .style("text-anchor", "end")
-                                    .attr("fill", fillColor)
-                                    .text(function (d) { return d; });
-
                             });
                     }
                 };
@@ -335,11 +321,10 @@
 
                     $('#GoToShowProgress', page).on('click',
                         function () {
-                            console.log(MainPage.tvdbCallFailed);
                             if (MainPage.tvdbCallFailed) {
                                 Dashboard.alert({
                                     message:
-                                        'Last time the background calculation task ran it got an error from the TVDB API so no calculations could be made for the show progress. This is mostly because the TVDB server gave a 500 response. <br/><br/>You have to run the task again, if the problem persists wait a bit longer before running the task again.'
+                                    'Last time the background calculation task ran it got an error from the TVDB API so no calculations could be made for the show progress. This is mostly because the TVDB server gave a 500 response. <br/><br/>You have to run the task again, if the problem persists wait a bit longer before running the task again.'
                                 });
                             } else {
                                 var href = Dashboard.getConfigurationPageUrl("UserBasedShowOverview");

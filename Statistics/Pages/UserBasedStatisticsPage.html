@@ -7,32 +7,46 @@
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
     <div data-role="page" class="page type-interior pluginConfigurationPage UserBasedStatisticsPage" data-require="emby-button,emby-select">
         <div data-role="content">
-            <div class="content-primary" style="max-width: 900px;">
+            <div class="content-primary">
                 <h1>User-based statistics</h1>
-                <div class="selectContainer">
-                    <label class="selectLabel selectLabelUnfocused" for="selectUser">Load statistics for:</label>
-                    <select is="emby-select" id="selectUser" label="Load statistics for:" class="emby-select-withoptioncolor emby-select"></select>
-                    <div class="selectArrowContainer">
-                        <div style="visibility: hidden;">0</div><i class="md-icon selectArrow"></i>
+                <div style="max-width: 900px;">
+                    <div class="selectContainer">
+                        <label class="selectLabel selectLabelUnfocused" for="selectUser">Load statistics for:</label>
+                        <select is="emby-select" id="selectUser" label="Load statistics for:" class="emby-select-withoptioncolor emby-select"></select>
+                        <div class="selectArrowContainer">
+                            <div style="visibility: hidden;">0</div><i class="md-icon selectArrow"></i>
+                        </div>
                     </div>
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" onclick="Emby.Page.back();">Go back</button>
                 </div>
-                <button is="emby-button" type="button" class="raised button-cancel block emby-button" onclick="Emby.Page.back();">Go back</button>
 
                 <h2 id="UserTitle"></h2>
-                <h3 id="OverallTitle"></h3>
-                <div>
-                    <div class="statRow" id="overallStat"></div>
+                <div class="dashboardSections">
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>General statistics</h2>
+                            <div class="statRow" id="overallStat"></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>Movie statistics</h2>
+                            <div class="statRow" id="movieStat"></div>
+                        </div>
+                    </div>
                 </div>
-                <h3 id="MovieTitle"></h3>
-                <div>
-                    <div class="statRow" id="movieStat"></div>
-                </div>
-                <h3 id="ShowTitle"></h3>
-                <div>
-                    <div class="statRow" id="showStat"></div>
-                </div>
-                <div style="clear: both;"></div>
-                <button is="emby-button" type="button" class="raised button-cancel block emby-button" onclick="Emby.Page.back();">Go back</button>
+
+                <div class="dashboardSections">
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                        <div class="dashboardSection">
+                            <h2>Show Statistics</h2>
+                            <div class="statRow" id="showStat"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    </div>
             </div>
         </div>
 
@@ -116,7 +130,7 @@
                 }
 
                     .statRow .col.small .statCard-content, .statRow .col.half .statCard-content, .statRow .col.mediumThin .statCard-content {
-                        height: 75px;
+                        height: 85px;
                         align-items: center;
                         justify-content: center;
                     }

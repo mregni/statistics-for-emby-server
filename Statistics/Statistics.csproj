@@ -61,7 +61,6 @@
     <Compile Include="Helpers\BaseCalculator.cs" />
     <Compile Include="Helpers\Calculator.cs" />
     <Compile Include="Configuration\UserStat.cs" />
-    <Compile Include="Helpers\ChartsCalculator.cs" />
     <Compile Include="Helpers\ShowProgressCalculator.cs" />
     <Compile Include="Models\Chart\ChartValueModel.cs" />
     <Compile Include="Models\LastSeenModel.cs" />

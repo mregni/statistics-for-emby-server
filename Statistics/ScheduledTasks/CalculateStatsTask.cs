@@ -59,7 +59,7 @@ namespace Statistics.ScheduledTasks
 
             // No users found, so stop the task
             if (users.Count == 0)
-            {
+            { 
                 _logger.Info("No Users returned");
                 return;
             }
@@ -67,6 +67,8 @@ namespace Statistics.ScheduledTasks
             // clear all previously saved stats
             PluginConfiguration.UserStats = new List<UserStat>();
             PluginConfiguration.GeneralStat = new List<ValueGroup>();
+            PluginConfiguration.MovieStat = new List<ValueGroup>();
+            PluginConfiguration.ShowStat = new List<ValueGroup>();
             PluginConfiguration.Charts = new List<ChartModel>();
             Plugin.Instance.SaveConfiguration();
 
@@ -78,14 +80,6 @@ namespace Statistics.ScheduledTasks
             var numComplete = 0;
 
             PluginConfiguration.LastUpdated = DateTime.Now.ToString("g", Thread.CurrentThread.CurrentCulture);
-
-            //General Stats calculations
-            using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager))
-            {
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateMovieQualities());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalMovies());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalBoxsets());
-            }
 
             numComplete++;
             progress.Report(percentPerUser * numComplete);
@@ -149,20 +143,29 @@ namespace Statistics.ScheduledTasks
 
             using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager))
             {
+                PluginConfiguration.GeneralStat.Add(calculator.CalculateMovieQualities());
+                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalUsers());
                 PluginConfiguration.GeneralStat.Add(calculator.CalculateMostActiveUsers(activeUsers));
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalShows());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalOwnedEpisodes());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateBiggestShow());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateLongestShow()); 
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateBiggestMovie());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateLongestMovie());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateOldestMovie());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateNewestMovie());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateNewestAddedMovie());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateNewestAddedEpisode());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateHighestRating());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateLowestRating());
-                //PluginConfiguration.Charts.Add(chartCalculator.CalculateDayOfWeekForAllUsersChart());
+
+                PluginConfiguration.Charts.Add(calculator.CalculateDayOfWeekForAllUsersChart());
+
+                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalMovies());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalBoxsets());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalMovieStudios());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateBiggestMovie());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateLongestMovie());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateOldestMovie());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateNewestMovie());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateHighestRating());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateLowestRating());
+                PluginConfiguration.MovieStat.Add(calculator.CalculateNewestAddedMovie());
+
+                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalShows());
+                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalOwnedEpisodes());
+                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalShowStudios());
+                PluginConfiguration.ShowStat.Add(calculator.CalculateBiggestShow());
+                PluginConfiguration.ShowStat.Add(calculator.CalculateLongestShow());
+                PluginConfiguration.ShowStat.Add(calculator.CalculateNewestAddedEpisode());
             }
 
             numComplete++;
@@ -214,6 +217,9 @@ namespace Statistics.ScheduledTasks
 
         private bool UpdateTvdbConnection(ShowProgressCalculator calculator, string time, IEnumerable<string> seriesIdsInLibrary, CancellationToken cancellationToken)
         {
+            if (PluginConfiguration.TotalEpisodeCounts?.IdList == null)
+                return true;
+
             var existingShows = PluginConfiguration.TotalEpisodeCounts.IdList.Select(x => x.ShowId).ToList();
             var updatedList = calculator.GetShowsToUpdate(existingShows, time, cancellationToken).ToList();
             if (calculator.IsCalculationFailed)

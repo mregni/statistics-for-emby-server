@@ -33,6 +33,8 @@
         internal const string NewestAddedEpisode = "Newest Added Episode";
         internal const string HighestMovieRating = "Highest Movie Rating";
         internal const string LowestMovieRating = "Lowest Movie Rating";
+        internal const string TotalStudios = "Total Studio's";
+        internal const string TotalUsers = "Total Users";
 
         //Help text for stats
         internal const string HelpMostActiveUsers = "Top 5 users that are the most active on the Emby server. This includes viewing movies and episodes.";

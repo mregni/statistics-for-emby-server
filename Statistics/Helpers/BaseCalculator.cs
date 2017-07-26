@@ -75,6 +75,11 @@ namespace Statistics.Helpers
             return GetAllMovies().Union(GetAllEpisodes().Cast<BaseItem>()).ToList();
         }
 
+        protected IEnumerable<User> GetAllUser()
+        {
+            return UserManager.Users;
+        }
+
         protected int GetOwnedCount(Type type)
         {
             var query = new InternalItemsQuery(User)

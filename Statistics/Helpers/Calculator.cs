@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
@@ -11,13 +13,14 @@ using Statistics.Api;
 using Statistics.Configuration;
 using Statistics.Enum;
 using Statistics.Models;
+using Statistics.Models.Chart;
 using Statistics.ViewModel;
 
 namespace Statistics.Helpers
 {
     public class Calculator : BaseCalculator
     {
-        
+        private readonly CultureInfo _cul = Thread.CurrentThread.CurrentCulture;
 
         public Calculator(User user,IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager)
             :base(userManager, libraryManager, userDataManager)
@@ -335,6 +338,46 @@ namespace Statistics.Helpers
             };
         }
 
+        public ValueGroup CalculateTotalMovieStudios()
+        {
+            var movies = GetAllMovies();
+            var studios = movies.Where(x => x.Studios.Any()).Select(x => x.Studios).ToList();
+
+            var count = studios.Distinct().Count();
+            return new ValueGroup
+            {
+                Title = Constants.TotalStudios,
+                ValueLineOne = $"{count}",
+                ValueLineTwo = ""
+            };
+        }
+
+        public ValueGroup CalculateTotalShowStudios()
+        {
+            var series = GetAllSeries();
+            var studios = series.Where(x => x.Studios.Any()).Select(x => x.Studios).ToList();
+
+            var count = studios.Distinct().Count();
+            return new ValueGroup
+            {
+                Title = Constants.TotalStudios,
+                ValueLineOne = $"{count}",
+                ValueLineTwo = ""
+            };
+        }
+
+        public ValueGroup CalculateTotalUsers()
+        {
+            var users = GetAllUser();
+            
+            return new ValueGroup
+            {
+                Title = Constants.TotalUsers,
+                ValueLineOne = $"{users.Count()}",
+                ValueLineTwo = ""
+            };
+        }
+        
         #endregion
 
         #region MostActiveUsers
@@ -661,7 +704,7 @@ namespace Statistics.Helpers
                         : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
 
-                valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.DvdEpisodeNumber} ");
+                valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
             }
 
             return new ValueGroup()
@@ -722,10 +765,50 @@ namespace Statistics.Helpers
 
         #endregion
 
+        #region WeekChart
+        public ChartModel CalculateDayOfWeekForAllUsersChart()
+        {
+            var chartValues = new ChartModel(new[]
+            {
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Monday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Tuesday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Wednesday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Thursday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Friday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Saturday),
+                _cul.DateTimeFormat.GetDayName(DayOfWeek.Sunday)
+            });
+
+            foreach (var user in UserManager.Users)
+            {
+                SetUser(user);
+                var userMovies = GetAllViewedMoviesByUser();
+                var userEpisodes = GetAllViewedEpisodesByUser();
+
+                userMovies
+                    .Where(x => UserDataManager.GetUserData(user, x).Played && UserDataManager.GetUserData(user, x).LastPlayedDate.HasValue)
+                    .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.DayOfWeek)
+                    .ToDictionary(x => x.Key, x => x.Count())
+                    .ToList()
+                    .ForEach(x => chartValues.Week.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Movies += x.Value);
+
+                userEpisodes
+                    .Where(x => UserDataManager.GetUserData(user, x).Played && UserDataManager.GetUserData(user, x).LastPlayedDate.HasValue)
+                    .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.DayOfWeek)
+                    .ToDictionary(x => x.Key, x => x.Count())
+                    .ToList()
+                    .ForEach(x => chartValues.Week.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Episodes += x.Value);
+            }
+
+            return chartValues;
+        }
+
+        #endregion
+
         private string CheckMaxLength(string value)
         {
-            if (value.Length > 43)
-                return value.Substring(0, 40) + "...";
+            if (value.Length > 30)
+                return value.Substring(0, 27) + "...";
             return value;;
         }
 
