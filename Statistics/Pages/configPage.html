@@ -19,38 +19,49 @@
                 </div>
 
                 <div class="dashboardSections">
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    <div class="dashboardColumn">
                         <div class="dashboardSection">
                             <h2>General statistics</h2>
                             <div class="statRow" id="generalStat"></div>
                         </div>
                     </div>
 
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    <div class="dashboardColumn" style="max-width:1833px">
                         <div class="dashboardSection">
                             <h2>Movie statistics</h2>
                             <div class="statRow" id="movieStat"></div>
                             <div style="clear: both;"></div>
-                            <h3>Movies watched per weekday</h3>
-                            <canvas id="weekMovieChart" width="400" height="200"></canvas>
+                            <div class="statRow">
+                                <div class="col large">
+                                    <h3>Episodes watched per day of the week</h3>
+                                    <canvas id="weekMovieChart" width="400" height="200"></canvas>
+                                </div>
+                                <div class="col large">
+                                    <h3>Episodes watched per day of the week</h3>
+                                    <canvas id="dayMovieChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div style="clear: both;"></div>
                         </div>
                     </div>
-                </div>
-                
-                
-                <div class="dashboardSections">
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+
+                    <div class="dashboardColumn" style="max-width:1833px">
                         <div class="dashboardSection">
                             <h2>Show Statistics</h2>
                             <div class="statRow" id="showStat"></div>
                             <div style="clear: both;"></div>
-                            <h3>Episodes watched per weekday</h3>
-                            <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
+                            <div class="statRow">
+                                <div class="col large">
+                                    <h3>Episodes watched per day of the week</h3>
+                                    <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
+                                </div>
+                                <div class="col large">
+                                    <h3>Episodes watched per hour of the day</h3>
+                                    <canvas id="dayEpisodesChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div style="clear: both;"></div>
                         </div>
-                    </div>
-                    
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
-
                     </div>
                 </div>
             </div>
@@ -124,7 +135,34 @@
             }
 
                 .statRow .col.small {
-                    width: 33.3333333333%;
+                    width: 16.66666%;
+                }
+
+                .statRow .col.half {
+                    width: 25%;
+                }
+
+                    .statRow .col.small .statCard-content, .statRow .col.half .statCard-content {
+                        min-height: 85px;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                .statRow .col.medium {
+                    width: 33.33333333%;
+                }
+
+                    .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
+                        min-height: 210px;
+                    }
+
+                .statRow .col.large {
+                    width: 50%;
+                }
+
+            @media screen and (max-width: 1120px) {
+                .statRow .col.small {
+                    width: 33.3333333%;
                 }
 
                 .statRow .col.half {
@@ -138,7 +176,7 @@
                     }
 
                 .statRow .col.medium {
-                    width: 66.6666666666%;
+                    width: 66.66666666%;
                 }
 
                     .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
@@ -148,6 +186,7 @@
                 .statRow .col.large {
                     width: 100%;
                 }
+            }
 
             @media screen and (max-width: 900px) {
                 .statRow .col.small, .statRow .col.medium, .statRow .col.half, .statRow .col.large {
@@ -261,10 +300,12 @@
                                         $("#showStat", page).append(html);
                                     });
 
+                                console.log(config);
+                                console.log(config.DayOfWeekChart);
                                 var keys = [];
                                 var movies = [];
                                 var episodes = [];
-                                $.each(config.Charts[0].Week, function (i, v) {
+                                $.each(config.DayOfWeekChart.Values, function (i, v) {
                                     keys.push(v.Key);
                                     movies.push(v.Movies);
                                     episodes.push(v.Episodes);
@@ -272,6 +313,19 @@
 
                                 MainPage.buildChart(keys, movies, '# of views per day', 'weekMovieChart');
                                 MainPage.buildChart(keys, episodes, '# of views per day', 'weekEpisodesChart');
+
+                                keys = [];
+                                movies = [];
+                                episodes = [];
+                                $.each(config.HourOfDayChart.Values, function (i, v) {
+                                    keys.push(v.Key);
+                                    movies.push(v.Movies);
+                                    episodes.push(v.Episodes);
+                                });
+
+                                MainPage.buildChart(keys, movies, '# of views per hour', 'dayMovieChart');
+                                MainPage.buildChart(keys, episodes, '# of views per hour', 'dayEpisodesChart');
+
                                 Dashboard.hideLoadingMsg();
                             }
                         });

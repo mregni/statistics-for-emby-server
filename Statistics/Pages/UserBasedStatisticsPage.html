@@ -22,14 +22,14 @@
 
                 <h2 id="UserTitle"></h2>
                 <div class="dashboardSections">
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    <div class="dashboardColumn" style="max-width:1833px">
                         <div class="dashboardSection">
                             <h2>General statistics</h2>
                             <div class="statRow" id="overallStat"></div>
                         </div>
                     </div>
 
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    <div class="dashboardColumn"  style="max-width:1833px">
                         <div class="dashboardSection">
                             <h2>Movie statistics</h2>
                             <div class="statRow" id="movieStat"></div>
@@ -38,14 +38,11 @@
                 </div>
 
                 <div class="dashboardSections">
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
+                    <div class="dashboardColumn" style="max-width:1833px">
                         <div class="dashboardSection">
                             <h2>Show Statistics</h2>
                             <div class="statRow" id="showStat"></div>
                         </div>
-                    </div>
-                    
-                    <div class="dashboardColumn dashboardColumn-2-40 dashboardColumn-3-46">
                     </div>
             </div>
         </div>
@@ -118,15 +115,15 @@
             }
 
                 .statRow .col.small {
-                    width: 33.3333333333%;
+                    width: 16.66666%;
                 }
 
                 .statRow .col.mediumThin {
-                    width: 66.6666666666%;
+                    width: 33.3333333%;
                 }
 
                 .statRow .col.half {
-                    width: 50%;
+                    width: 25%;
                 }
 
                     .statRow .col.small .statCard-content, .statRow .col.half .statCard-content, .statRow .col.mediumThin .statCard-content {
@@ -136,7 +133,34 @@
                     }
 
                 .statRow .col.medium {
-                    width: 66.6666666666%;
+                    width: 33.333333333%;
+                }
+
+                    .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
+                        min-height: 210px;
+                    }
+
+                .statRow .col.large {
+                    width: 50%;
+                }
+
+            @media screen and (max-width: 1120px) {
+                .statRow .col.small {
+                    width: 33.3333333%;
+                }
+
+                .statRow .col.half {
+                    width: 50%;
+                }
+
+                    .statRow .col.small .statCard-content, .statRow .col.half .statCard-content {
+                        min-height: 85px;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                .statRow .col.medium {
+                    width: 66.66666666%;
                 }
 
                     .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
@@ -146,6 +170,7 @@
                 .statRow .col.large {
                     width: 100%;
                 }
+            }
 
             @media screen and (max-width: 900px) {
                 .statRow .col.small, .statRow .col.medium, .statRow .col.mediumThin, .statRow .col.half, .statRow .col.large {

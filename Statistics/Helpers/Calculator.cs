@@ -765,7 +765,7 @@ namespace Statistics.Helpers
 
         #endregion
 
-        #region WeekChart
+        #region Charts
         public ChartModel CalculateDayOfWeekForAllUsersChart()
         {
             var chartValues = new ChartModel(new[]
@@ -790,14 +790,42 @@ namespace Statistics.Helpers
                     .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.DayOfWeek)
                     .ToDictionary(x => x.Key, x => x.Count())
                     .ToList()
-                    .ForEach(x => chartValues.Week.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Movies += x.Value);
+                    .ForEach(x => chartValues.Values.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Movies += x.Value);
 
                 userEpisodes
                     .Where(x => UserDataManager.GetUserData(user, x).Played && UserDataManager.GetUserData(user, x).LastPlayedDate.HasValue)
                     .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.DayOfWeek)
                     .ToDictionary(x => x.Key, x => x.Count())
                     .ToList()
-                    .ForEach(x => chartValues.Week.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Episodes += x.Value);
+                    .ForEach(x => chartValues.Values.Single(y => y.Key == _cul.DateTimeFormat.GetDayName(x.Key)).Episodes += x.Value);
+            }
+
+            return chartValues;
+        }
+
+        public ChartModel CalculateHourForAllUsersChart()
+        {
+            var chartValues = new ChartModel(new[]{ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
+
+            foreach (var user in UserManager.Users)
+            {
+                SetUser(user);
+                var userMovies = GetAllViewedMoviesByUser();
+                var userEpisodes = GetAllViewedEpisodesByUser();
+
+                userMovies
+                    .Where(x => UserDataManager.GetUserData(user, x).Played && UserDataManager.GetUserData(user, x).LastPlayedDate.HasValue)
+                    .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.Hour)
+                    .ToDictionary(x => x.Key, x => x.Count())
+                    .ToList()
+                    .ForEach(x => chartValues.Values.Single(y => y.Key == x.Key.ToString()).Movies += x.Value);
+
+                userEpisodes
+                    .Where(x => UserDataManager.GetUserData(user, x).Played && UserDataManager.GetUserData(user, x).LastPlayedDate.HasValue)
+                    .GroupBy(x => UserDataManager.GetUserData(user, x).LastPlayedDate.Value.Hour)
+                    .ToDictionary(x => x.Key, x => x.Count())
+                    .ToList()
+                    .ForEach(x => chartValues.Values.Single(y => y.Key == x.Key.ToString()).Episodes += x.Value);
             }
 
             return chartValues;

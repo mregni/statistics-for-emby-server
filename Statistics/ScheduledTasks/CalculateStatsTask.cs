@@ -69,7 +69,6 @@ namespace Statistics.ScheduledTasks
             PluginConfiguration.GeneralStat = new List<ValueGroup>();
             PluginConfiguration.MovieStat = new List<ValueGroup>();
             PluginConfiguration.ShowStat = new List<ValueGroup>();
-            PluginConfiguration.Charts = new List<ChartModel>();
             Plugin.Instance.SaveConfiguration();
 
 
@@ -144,10 +143,11 @@ namespace Statistics.ScheduledTasks
             using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager))
             {
                 PluginConfiguration.GeneralStat.Add(calculator.CalculateMovieQualities());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalUsers());
                 PluginConfiguration.GeneralStat.Add(calculator.CalculateMostActiveUsers(activeUsers));
+                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalUsers());
 
-                PluginConfiguration.Charts.Add(calculator.CalculateDayOfWeekForAllUsersChart());
+                PluginConfiguration.DayOfWeekChart = calculator.CalculateDayOfWeekForAllUsersChart();
+                PluginConfiguration.HourOfDayChart = calculator.CalculateHourForAllUsersChart();
 
                 PluginConfiguration.MovieStat.Add(calculator.CalculateTotalMovies());
                 PluginConfiguration.MovieStat.Add(calculator.CalculateTotalBoxsets());

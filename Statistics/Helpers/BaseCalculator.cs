@@ -8,6 +8,7 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Entities;
+using MediaBrowser.Controller.Dto;
 
 namespace Statistics.Helpers
 {
@@ -87,8 +88,7 @@ namespace Statistics.Helpers
                 IncludeItemTypes = new[] { type.Name },
                 Limit = 0,
                 Recursive = true,
-                IsVirtualItem = false,
-                SourceTypes = new[] { SourceType.Library }
+                IsVirtualItem = false
             };
 
             return LibraryManager.GetCount(query);
@@ -108,8 +108,7 @@ namespace Statistics.Helpers
                 IncludeItemTypes = new[] { typeof(Episode).Name },
                 Recursive = true,
                 ParentId = show.Id,
-                IsSpecialSeason = false,
-                SourceTypes = new[] { SourceType.Library },
+                IsSpecialSeason = false,               
                 IsVirtualItem = false
             };
 
@@ -125,7 +124,6 @@ namespace Statistics.Helpers
                 Recursive = true,
                 ParentId = show.Id,
                 IsSpecialSeason = false,
-                SourceTypes = new[] { SourceType.Library },
                 IsVirtualItem = false,
                 IsPlayed = true
             };
@@ -142,8 +140,7 @@ namespace Statistics.Helpers
                 Recursive = true,
                 ParentId = show.Id,
                 IsSpecialSeason = true,
-                IsVirtualItem = false,
-                SourceTypes = new[] { SourceType.Library }
+                IsVirtualItem = false
             };
 
             var seasons = LibraryManager.GetItemList(query).OfType<Season>();
@@ -159,8 +156,7 @@ namespace Statistics.Helpers
                 ParentId = show.Id,
                 IsSpecialSeason = true,
                 MaxPremiereDate = DateTime.Now,
-                IsVirtualItem = false,
-                SourceTypes = new[] { SourceType.Library }
+                IsVirtualItem = false
             };
 
             var seasons = LibraryManager.GetItemList(query).OfType<Season>();
@@ -175,8 +171,11 @@ namespace Statistics.Helpers
             {
                 IncludeItemTypes = new[] { typeof(T).Name },
                 Recursive = true,
-                SourceTypes = new[] { SourceType.Library },
-                IsVirtualItem = false
+                IsVirtualItem = false,
+                DtoOptions = new DtoOptions(false)
+                {
+                    EnableImages = false
+                }
             };
             
             return LibraryManager.GetItemList(query).OfType<T>();
@@ -189,8 +188,11 @@ namespace Statistics.Helpers
                 IncludeItemTypes = new[] { typeof(T).Name },
                 IsPlayed = isPLayed,
                 Recursive = true,
-                SourceTypes = new[] { SourceType.Library },
-                IsVirtualItem = false
+                IsVirtualItem = false,
+                DtoOptions = new DtoOptions(false)
+                {
+                    EnableImages = false
+                }
             };
 
             return LibraryManager.GetItemsResult(query).Items.OfType<T>().ToList();

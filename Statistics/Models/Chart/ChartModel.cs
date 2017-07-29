@@ -4,20 +4,20 @@ namespace Statistics.Models.Chart
 {
     public class ChartModel
     {
-        public List<ChartValueModel> Week { get; set; }
+        public List<ChartValueModel> Values { get; set; }
 
         public ChartModel()
         {
-            Week = new List<ChartValueModel>();
+            Values = new List<ChartValueModel>();
         }
 
         public ChartModel(IEnumerable<string> keys )
         {
-            Week = new List<ChartValueModel>();
+            Values = new List<ChartValueModel>();
 
             foreach (var key in keys)
             {
-                Week.Add(new ChartValueModel(key));
+                Values.Add(new ChartValueModel(key));
             }
         }
     }
