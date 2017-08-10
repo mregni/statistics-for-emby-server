@@ -9,6 +9,7 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Controller.Dto;
+using MediaBrowser.Model.Querying;
 
 namespace Statistics.Helpers
 {
@@ -174,7 +175,12 @@ namespace Statistics.Helpers
                 IsVirtualItem = false,
                 DtoOptions = new DtoOptions(false)
                 {
-                    EnableImages = false
+                    EnableImages = false,
+                    Fields = new List<ItemFields>
+                    {
+                        ItemFields.DateCreated,
+                        ItemFields.Studios
+                    }
                 }
             };
             
@@ -191,7 +197,12 @@ namespace Statistics.Helpers
                 IsVirtualItem = false,
                 DtoOptions = new DtoOptions(false)
                 {
-                    EnableImages = false
+                    EnableImages = false,
+                    Fields = new List<ItemFields>
+                    {
+                        ItemFields.DateCreated,
+                        ItemFields.Studios
+                    }
                 }
             };
 

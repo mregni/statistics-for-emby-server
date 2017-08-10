@@ -65,8 +65,7 @@ namespace Statistics.Helpers
                     m =>
                         UserDataManager.GetUserData(
                                 User ??
-                                UserManager.Users.First(
-                                    u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
+                                UserManager.Users.First(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
                             .LastPlayedDate)
                 .Take(8).ToList();
 
@@ -94,8 +93,7 @@ namespace Statistics.Helpers
                     m =>
                         UserDataManager.GetUserData(
                                 User ??
-                                UserManager.Users.First(
-                                    u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
+                                UserManager.Users.First(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
                             .LastPlayedDate)
                 .Take(8).ToList();
 

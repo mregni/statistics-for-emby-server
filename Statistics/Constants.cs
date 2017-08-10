@@ -5,6 +5,8 @@
         internal const string Name = "Statistics";
         internal const string ShowProgressName = "UserBasedShowOverview";
         internal const string MainStatisticsName = "UserBasedStatistics";
+        internal const string Moviepage = "MoviePage";
+
         internal const string Description = "Get statistics from your collection";
 
         internal const string FavoriteMovieGenres = "Favorite Movie Genres";

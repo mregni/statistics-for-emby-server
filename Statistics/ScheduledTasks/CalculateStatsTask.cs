@@ -71,8 +71,8 @@ namespace Statistics.ScheduledTasks
             PluginConfiguration.ShowStat = new List<ValueGroup>();
             Plugin.Instance.SaveConfiguration();
 
-
-            //var chartCalculator = new ChartsCalculator(_userManager, _libraryManager, _userDataManager);
+            var ver = System.Reflection.Assembly.GetAssembly(typeof(CalculateStatsTask)).GetName().Version;
+            PluginConfiguration.Version = ver.ToString();
 
             // purely for progress reporting
             var percentPerUser = 100 / (users.Count + 3);

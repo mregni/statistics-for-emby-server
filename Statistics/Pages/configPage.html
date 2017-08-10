@@ -12,62 +12,57 @@
                 <p id="statsIntro">
                     This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" count. It will only count as 1. Last statistics finished at
                 </p>
+                <p id="statsVersion">
+                    Plugin version: 
+                </p>
 
+                <h2>General statistics</h2>
                 <div style="max-width: 900px;">
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToUserStats">View user-based statistics</button>
+                </div>
+                <div class="statRow" id="generalStat"></div>
+
+                <h2>Movie statistics</h2>
+                <div style="max-width: 900px;">
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToMovies">View movie statistics</button>
+                </div>
+
+                <div class="statRow" id="movieStat"></div>
+                <div style="clear: both;"></div>
+                <div class="statRow">
+                    <div class="col medium">
+                        <h3>Movies watched per day of the week</h3>
+                        <canvas id="weekMovieChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col medium">
+                        <h3>Movies watched per day of the week</h3>
+                        <canvas id="dayMovieChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                <div style="clear: both;"></div>
+
+
+                <h2>Show Statistics</h2>
+                <div style="max-width: 900px;">
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToShowProgress">View user-based show progress</button>
                 </div>
-
-                <div class="dashboardSections">
-                    <div class="dashboardColumn">
-                        <div class="dashboardSection">
-                            <h2>General statistics</h2>
-                            <div class="statRow" id="generalStat"></div>
-                        </div>
+                <div class="statRow" id="showStat"></div>
+                <div style="clear: both;"></div>
+                <div class="statRow">
+                    <div class="col large">
+                        <h3>Episodes watched per day of the week</h3>
+                        <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
                     </div>
-
-                    <div class="dashboardColumn" style="max-width:1833px">
-                        <div class="dashboardSection">
-                            <h2>Movie statistics</h2>
-                            <div class="statRow" id="movieStat"></div>
-                            <div style="clear: both;"></div>
-                            <div class="statRow">
-                                <div class="col large">
-                                    <h3>Episodes watched per day of the week</h3>
-                                    <canvas id="weekMovieChart" width="400" height="200"></canvas>
-                                </div>
-                                <div class="col large">
-                                    <h3>Episodes watched per day of the week</h3>
-                                    <canvas id="dayMovieChart" width="400" height="200"></canvas>
-                                </div>
-                            </div>
-                            <div style="clear: both;"></div>
-                        </div>
-                    </div>
-
-                    <div class="dashboardColumn" style="max-width:1833px">
-                        <div class="dashboardSection">
-                            <h2>Show Statistics</h2>
-                            <div class="statRow" id="showStat"></div>
-                            <div style="clear: both;"></div>
-                            <div class="statRow">
-                                <div class="col large">
-                                    <h3>Episodes watched per day of the week</h3>
-                                    <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
-                                </div>
-                                <div class="col large">
-                                    <h3>Episodes watched per hour of the day</h3>
-                                    <canvas id="dayEpisodesChart" width="400" height="200"></canvas>
-                                </div>
-                            </div>
-                            <div style="clear: both;"></div>
-                        </div>
+                    <div class="col large">
+                        <h3>Episodes watched per hour of the day</h3>
+                        <canvas id="dayEpisodesChart" width="400" height="200"></canvas>
                     </div>
                 </div>
+                <div style="clear: both;"></div>
             </div>
         </div>
 
-        <style>
+    <style>
             .statCard-stats-title {
                 font-size: 1rem;
                 padding-bottom: 5px;
@@ -222,8 +217,8 @@
                     clear: both;
                 }
         </style>
-        <!-- ReSharper disable once PossiblyUnassignedProperty -->
-        <script type="text/javascript">
+    <!-- ReSharper disable once PossiblyUnassignedProperty -->
+    <script type="text/javascript">
 
             function showInfo(text, title) {
                 Dashboard.alert({ message: text, title: title });
@@ -232,7 +227,7 @@
             (function () {
                 require.config({
                     paths: {
-                        chart: "http://www.chartjs.org/dist/2.6.0/Chart.bundle"
+                        chart: "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle"
                     },
                     waitSeconds: 2
                 });
@@ -279,7 +274,7 @@
                                 MainPage.tvdbCallFailed = config.IsTheTvdbCallFailed;
 
                                 $("#statsIntro", page).append('<b>' + config.LastUpdated + '</b>');
-                                //MainPage.buildChart(config.Charts[0].Week, "");
+                                $("#statsVersion", page).append('<b>' + config.Version + '</b>');
 
                                 $.each(config.GeneralStat,
                                     function (i, v) {
@@ -373,6 +368,19 @@
                             Dashboard.navigate(href);
                         });
 
+                    $('#GoToMovieQuality', page).on('click',
+                        function () {
+                            var href = Dashboard.getConfigurationPageUrl("MovieQualityPage");
+                            Dashboard.navigate(href);
+                        });
+
+                    $('#GoToMovies', page).on('click',
+                        function () {
+                            var href = Dashboard.getConfigurationPageUrl("MoviePage");
+                            Dashboard.navigate(href);
+                        });
+
+
                     $('#GoToShowProgress', page).on('click',
                         function () {
                             if (MainPage.tvdbCallFailed) {
@@ -389,7 +397,7 @@
                     MainPage.loadStats(page);
                 });
             })();
-        </script>
+    </script>
     </div>
 </body>
 </html>

@@ -14,7 +14,8 @@
                         <label class="selectLabel selectLabelUnfocused" for="selectUser">Load statistics for:</label>
                         <select is="emby-select" id="selectUser" label="Load statistics for:" class="emby-select-withoptioncolor emby-select"></select>
                         <div class="selectArrowContainer">
-                            <div style="visibility: hidden;">0</div><i class="md-icon selectArrow"></i>
+                            <div style="visibility: hidden;">0</div>
+                            <i class="md-icon selectArrow"></i>
                         </div>
                     </div>
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" onclick="Emby.Page.back();">Go back</button>
@@ -22,14 +23,14 @@
 
                 <h2 id="UserTitle"></h2>
                 <div class="dashboardSections">
-                    <div class="dashboardColumn" style="max-width:1833px">
+                    <div class="dashboardColumn" style="max-width: 1833px">
                         <div class="dashboardSection">
                             <h2>General statistics</h2>
                             <div class="statRow" id="overallStat"></div>
                         </div>
                     </div>
 
-                    <div class="dashboardColumn"  style="max-width:1833px">
+                    <div class="dashboardColumn" style="max-width: 1833px">
                         <div class="dashboardSection">
                             <h2>Movie statistics</h2>
                             <div class="statRow" id="movieStat"></div>
@@ -38,15 +39,15 @@
                 </div>
 
                 <div class="dashboardSections">
-                    <div class="dashboardColumn" style="max-width:1833px">
+                    <div class="dashboardColumn" style="max-width: 1833px">
                         <div class="dashboardSection">
                             <h2>Show Statistics</h2>
                             <div class="statRow" id="showStat"></div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
-
         <style>
             .statCard-stats-title {
                 font-size: 1rem;

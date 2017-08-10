@@ -24,6 +24,7 @@ namespace Statistics.Configuration
         public ChartModel DayOfWeekChart { get; set; }
         public ChartModel HourOfDayChart { get; set; }
         public string LastUpdated { get; set; }
+        public string Version { get; set; }
 
         public UpdateModel TotalEpisodeCounts { get; set; }
         public bool IsTheTvdbCallFailed { get; set; }
