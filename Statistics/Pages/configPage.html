@@ -10,10 +10,11 @@
             <div class="content-primary" style="max-width: 900px;">
                 <h1>Statistics plugin</h1>
                 <p id="statsIntro">
-                    This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" time. It will only count as 1. Last statistics finished at
+                    This plugin will calculate overall and user-based statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" time, it will only count as 1. Last statistics finished at
                 </p>
                 <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToUserStats">View user-based statistics</button>
                 <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToShowProgress">View user-based show progress</button>
+				<p></p>
                 <h2 id="GeneralTitle"></h2>
                 <div id="statCard-stats">
                     <div class="statRow" id="generalStat"></div>
@@ -255,7 +256,29 @@
                                     .attr("height", height + margin.top + margin.bottom)
                                     .append("g")
                                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+									
+								//add mouseover locator and tooltip
+								locator = chartWrapper.append('circle')
+									.style('display', 'none')
+									.attr('r', 10)
+									.attr('fill', '#f00');
 
+								chartWrapper.on('touchmove', onTouchMove);
+
+								var touchScale = d3.scale.linear().domain([0,width]).range([0,data.length-1]).clamp(true);
+
+								function onTouchMove() {
+									var xPos = d3.touches(this)[0][0];
+									var d = data[~~touchScale(xPos)];
+										
+									locator.attr({
+										cx : x(new Date(d.date)),
+										cy : y(d.value)
+									})
+									.style('display', 'block');
+								}
+								//end mouseover locator and tooltip
+								
                                 color.domain(d3.keys(data[0]).filter(function (key) { return key !== "Key"; }));
 
                                 data.forEach(function (d) {
