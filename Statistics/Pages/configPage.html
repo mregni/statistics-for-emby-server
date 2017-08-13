@@ -12,11 +12,8 @@
                 <p id="statsIntro">
                     This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" count. It will only count as 1. Last statistics finished at
                 </p>
-                <p id="statsVersion">
-                    Plugin version: 
-                </p>
 
-                <h2>General statistics</h2>
+                <h2>General statistics</h2> 
                 <div style="max-width: 900px;">
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToUserStats">View user-based statistics</button>
                 </div>
@@ -30,11 +27,11 @@
                 <div class="statRow" id="movieStat"></div>
                 <div style="clear: both;"></div>
                 <div class="statRow">
-                    <div class="col medium">
+                    <div class="col large">
                         <h3>Movies watched per day of the week</h3>
                         <canvas id="weekMovieChart" width="400" height="200"></canvas>
                     </div>
-                    <div class="col medium">
+                    <div class="col large">
                         <h3>Movies watched per day of the week</h3>
                         <canvas id="dayMovieChart" width="400" height="200"></canvas>
                     </div>
@@ -274,7 +271,6 @@
                                 MainPage.tvdbCallFailed = config.IsTheTvdbCallFailed;
 
                                 $("#statsIntro", page).append('<b>' + config.LastUpdated + '</b>');
-                                $("#statsVersion", page).append('<b>' + config.Version + '</b>');
 
                                 $.each(config.GeneralStat,
                                     function (i, v) {
