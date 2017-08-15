@@ -232,7 +232,7 @@
                 var MainPage = {
                     pluginId: '291d866f-baad-464a-aed6-a4a8b95a8fd7',
                     tvdbCallFailed: false,
-                    createStat: function (i, v) {
+                    createStat: function (v) {
                         var html = '<div class="col ' +
                             v.Size +
                             '"><div class="statCard"><div class="statCard-content">';
@@ -272,12 +272,10 @@
 
                                 $("#statsIntro", page).append('<b>' + config.LastUpdated + '</b>');
 
-                                $.each(config.GeneralStat,
-                                    function (i, v) {
-                                        var html = MainPage.createStat(i, v);
-                                        $("#generalStat", page).append(html);
-                                    });
-
+                                $("#generalStat", page).append(MainPage.createStat(config.MovieQualities));
+                                $("#generalStat", page).append(MainPage.createStat(config.MostActiveUsers));
+                                $("#generalStat", page).append(MainPage.createStat(config.TotalUsers));
+                            
                                 $.each(config.MovieStat,
                                     function (i, v) {
                                         var html = MainPage.createStat(i, v);

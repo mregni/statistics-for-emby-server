@@ -142,9 +142,9 @@ namespace Statistics.ScheduledTasks
 
             using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager))
             {
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateMovieQualities());
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateMostActiveUsers(activeUsers));
-                PluginConfiguration.GeneralStat.Add(calculator.CalculateTotalUsers());
+                PluginConfiguration.MovieQualities = calculator.CalculateMovieQualities();
+                PluginConfiguration.MostActiveUsers = calculator.CalculateMostActiveUsers(activeUsers);
+                PluginConfiguration.TotalUsers = calculator.CalculateTotalUsers();
 
                 PluginConfiguration.DayOfWeekChart = calculator.CalculateDayOfWeekForAllUsersChart();
                 PluginConfiguration.HourOfDayChart = calculator.CalculateHourForAllUsersChart();
