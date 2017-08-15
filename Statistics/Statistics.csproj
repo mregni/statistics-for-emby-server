@@ -67,6 +67,11 @@
     <Compile Include="Pages\UserBasedStatistics.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Pages\UserBasedShowOverview.cs" />
+	<Compile Include="Pages\css\theme.css" />
+	<Compile Include="Pages\css\UserBasedShow.css" />
+	<Compile Include="Pages\js\MainPage.js" />
+	<Compile Include="Pages\js\UserBasedStats.js" />
+	<Compile Include="Pages\js\UserBasedShow.js" />
     <Compile Include="Constants.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
