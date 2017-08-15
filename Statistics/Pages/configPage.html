@@ -5,12 +5,14 @@
 </head>
 <body>
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+	<link rel="stylesheet" type="text/css" href="css/theme.css">
+	<script type="text/javascript" src="js/MainPage.js"></script>
     <div data-role="page" class="page type-interior pluginConfigurationPage statisticsConfigurationPage" data-require="emby-button,emby-select">
         <div data-role="content">
             <div class="content-primary">
                 <h1>Statistics plugin</h1>
                 <p id="statsIntro">
-                    This plugin will calculate overall and userbased statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" count. It will only count as 1. Last statistics finished at
+                    This plugin will calculate overall and user-based statistics from this Emby server instance. Keep in mind that viewing an item multiple times will not increase the "watched" time, it will only count as 1. Last statistics calculation finished at
                 </p>
 
                 <h2>General statistics</h2> 
@@ -20,19 +22,20 @@
                 <div class="statRow" id="generalStat"></div>
 
                 <h2>Movie statistics</h2>
-                <div style="max-width: 900px;">
+                <!-- currently unused page/button -->
+				<!-- <div style="max-width: 900px;">
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToMovies">View movie statistics</button>
-                </div>
+                </div> -->
 
                 <div class="statRow" id="movieStat"></div>
                 <div style="clear: both;"></div>
                 <div class="statRow">
                     <div class="col large">
-                        <h3>Movies watched per day of the week</h3>
+                        <h3>Most popular days of the week <br>for watching movies</h3>
                         <canvas id="weekMovieChart" width="400" height="200"></canvas>
                     </div>
                     <div class="col large">
-                        <h3>Movies watched per day of the week</h3>
+                        <h3>Most popular hour of the day <br>for watching movies</h3>
                         <canvas id="dayMovieChart" width="400" height="200"></canvas>
                     </div>
                 </div>
@@ -47,11 +50,11 @@
                 <div style="clear: both;"></div>
                 <div class="statRow">
                     <div class="col large">
-                        <h3>Episodes watched per day of the week</h3>
+                        <h3>Most popular days of the week <br>for watching shows</h3>
                         <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
                     </div>
                     <div class="col large">
-                        <h3>Episodes watched per hour of the day</h3>
+                        <h3>Most popular hour of the day <br>for watching shows</h3>
                         <canvas id="dayEpisodesChart" width="400" height="200"></canvas>
                     </div>
                 </div>
@@ -59,341 +62,8 @@
             </div>
         </div>
 
-    <style>
-            .statCard-stats-title {
-                font-size: 1rem;
-                padding-bottom: 5px;
-            }
-
-            .medium .statCard .statCard-stats-title, .large .statCard .statCard-stats-title {
-                text-align: center;
-            }
-
-            .statCard-stats-number {
-                font-size: 1.2rem;
-                font-weight: 500;
-            }
-
-                .statCard-stats-number table {
-                    width: 100%;
-                }
-
-            .small .statCard .statCard-stats-number {
-                text-align: center;
-            }
-
-            .medium .statCard .statCard-stats-number, .large .statCard .statCard-stats-number {
-                text-align: left;
-            }
-
-            .statCard {
-                -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12), 0 3px 1px -2px rgba(0, 0, 0, .2);
-                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12), 0 3px 1px -2px rgba(0, 0, 0, .2);
-                background-color: #222326;
-                -webkit-border-radius: 2px;
-                border-radius: 2px;
-                height: 100%;
-            }
-
-                .statCard .statCard-content {
-                    padding: 10px 14px;
-                    background-color: rgb(82, 181, 75);
-                    color: #fff !important;
-                    overflow: hidden;
-                    position: relative;
-                    display: flex;
-                    flex-flow: column;
-                }
-
-                    .statCard .statCard-content div {
-                        margin: 0;
-                        color: inherit;
-                    }
-
-                    .statCard .statCard-content .infoBlock {
-                        position: absolute;
-                        right: 5px;
-                        top: 5px;
-                        cursor: pointer;
-                    }
-
-            .statRow .col {
-                float: left;
-                box-sizing: border-box;
-                padding-bottom: 0.75rem;
-                padding-left: 0.75rem;
-                padding-right: 0.75rem;
-                padding-top: 0.75rem;
-            }
-
-                .statRow .col.small {
-                    width: 16.66666%;
-                }
-
-                .statRow .col.half {
-                    width: 25%;
-                }
-
-                    .statRow .col.small .statCard-content, .statRow .col.half .statCard-content {
-                        min-height: 85px;
-                        align-items: center;
-                        justify-content: center;
-                    }
-
-                .statRow .col.medium {
-                    width: 33.33333333%;
-                }
-
-                    .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
-                        min-height: 210px;
-                    }
-
-                .statRow .col.large {
-                    width: 50%;
-                }
-
-            @media screen and (max-width: 1120px) {
-                .statRow .col.small {
-                    width: 33.3333333%;
-                }
-
-                .statRow .col.half {
-                    width: 50%;
-                }
-
-                    .statRow .col.small .statCard-content, .statRow .col.half .statCard-content {
-                        min-height: 85px;
-                        align-items: center;
-                        justify-content: center;
-                    }
-
-                .statRow .col.medium {
-                    width: 66.66666666%;
-                }
-
-                    .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
-                        min-height: 210px;
-                    }
-
-                .statRow .col.large {
-                    width: 100%;
-                }
-            }
-
-            @media screen and (max-width: 900px) {
-                .statRow .col.small, .statRow .col.medium, .statRow .col.half, .statRow .col.large {
-                    width: 100%;
-                }
-
-                    .statRow .col.small .statCard-content, .statRow .col.half .statCard-content {
-                        min-height: 1px;
-                    }
-            }
-
-            @media screen and (max-width: 680px) {
-                .statCard-stats-title {
-                    font-size: 0.8rem;
-                    padding-bottom: 5px;
-                }
-
-                .statCard-stats-number {
-                    font-size: 1rem;
-                    font-weight: 500;
-                }
-            }
-
-            .statRow {
-                margin-left: auto;
-                margin-right: auto;
-                margin-bottom: 20px;
-            }
-
-                .statRow:after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-        </style>
     <!-- ReSharper disable once PossiblyUnassignedProperty -->
-    <script type="text/javascript">
 
-            function showInfo(text, title) {
-                Dashboard.alert({ message: text, title: title });
-            }
-
-            (function () {
-                require.config({
-                    paths: {
-                        chart: "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle"
-                    },
-                    waitSeconds: 2
-                });
-
-                var MainPage = {
-                    pluginId: '291d866f-baad-464a-aed6-a4a8b95a8fd7',
-                    tvdbCallFailed: false,
-                    createStat: function (i, v) {
-                        var html = '<div class="col ' +
-                            v.Size +
-                            '"><div class="statCard"><div class="statCard-content">';
-
-                        if (v.ExtraInformation !== undefined)
-                            html += "<div class=\"infoBlock\" onclick=\"showInfo('" +
-                                v.ExtraInformation +
-                                "', '" +
-                                v.Title +
-                                "');\"><i class=\"md-icon\">info_outline</i></div>";
-
-                        html += '<div class="statCard-stats-title">' +
-                            v.Title +
-                            '</div><div class="statCard-stats-number inside">' +
-                            v.ValueLineOne +
-                            '</div><div class="statCard-stats-number inside">' +
-                            v.ValueLineTwo +
-                            '</div></div></div></div>';
-
-                        return html;
-                    },
-                    loadStats: function (page) {
-                        Dashboard.showLoadingMsg();
-
-                        ApiClient.getPluginConfiguration(MainPage.pluginId).then(function (config) {
-                            if (config.LastUpdated === undefined) {
-                                Dashboard.alert({
-                                    message:
-                                    'No configuration found, please run the statistics task on the Scheduled Tasks page and come back for the results.'
-                                });
-                                $('#GoToUserStats', page).css("display", "none");
-                                $('#GoToShowProgress', page).css("display", "none");
-                                Dashboard.hideLoadingMsg();
-                            } else {
-                                console.log(config.IsTheTvdbCallFailed);
-                                MainPage.tvdbCallFailed = config.IsTheTvdbCallFailed;
-
-                                $("#statsIntro", page).append('<b>' + config.LastUpdated + '</b>');
-
-                                $.each(config.GeneralStat,
-                                    function (i, v) {
-                                        var html = MainPage.createStat(i, v);
-                                        $("#generalStat", page).append(html);
-                                    });
-
-                                $.each(config.MovieStat,
-                                    function (i, v) {
-                                        var html = MainPage.createStat(i, v);
-                                        $("#movieStat", page).append(html);
-                                    });
-
-
-                                $.each(config.ShowStat,
-                                    function (i, v) {
-                                        var html = MainPage.createStat(i, v);
-                                        $("#showStat", page).append(html);
-                                    });
-
-                                console.log(config);
-                                console.log(config.DayOfWeekChart);
-                                var keys = [];
-                                var movies = [];
-                                var episodes = [];
-                                $.each(config.DayOfWeekChart.Values, function (i, v) {
-                                    keys.push(v.Key);
-                                    movies.push(v.Movies);
-                                    episodes.push(v.Episodes);
-                                });
-
-                                MainPage.buildChart(keys, movies, '# of views per day', 'weekMovieChart');
-                                MainPage.buildChart(keys, episodes, '# of views per day', 'weekEpisodesChart');
-
-                                keys = [];
-                                movies = [];
-                                episodes = [];
-                                $.each(config.HourOfDayChart.Values, function (i, v) {
-                                    keys.push(v.Key);
-                                    movies.push(v.Movies);
-                                    episodes.push(v.Episodes);
-                                });
-
-                                MainPage.buildChart(keys, movies, '# of views per hour', 'dayMovieChart');
-                                MainPage.buildChart(keys, episodes, '# of views per hour', 'dayEpisodesChart');
-
-                                Dashboard.hideLoadingMsg();
-                            }
-                        });
-                    },
-                    buildChart(keys, data, title, div) {
-                        require(["chart"],
-                            function (Chart) {
-                                var colors = [];
-                                $.each(data, function (i, v) {
-                                    colors.push('rgba(82, 181, 75, 1)');
-                                })
-                                var ctx = document.getElementById(div);
-                                var myBarChart = new Chart(ctx, {
-                                    type: 'bar',
-                                    data: {
-                                        labels: keys,
-                                        datasets: [{
-                                            label: title,
-                                            data: data,
-                                            backgroundColor: colors,
-                                            borderColor: colors,
-                                            borderWidth: 1
-                                        }]
-                                    },
-                                    options: {
-                                        scales: {
-                                            yAxes: [{
-                                                ticks: {
-                                                    beginAtZero: true
-                                                }
-                                            }]
-                                        }
-                                    }
-                                });
-                            });
-                    }
-                };
-
-                $('.statisticsConfigurationPage').on('pageinit', function (event) {
-                    var page = this;
-
-                    $('#GoToUserStats', page).on('click',
-                        function () {
-                            var href = Dashboard.getConfigurationPageUrl("UserBasedStatistics");
-                            Dashboard.navigate(href);
-                        });
-
-                    $('#GoToMovieQuality', page).on('click',
-                        function () {
-                            var href = Dashboard.getConfigurationPageUrl("MovieQualityPage");
-                            Dashboard.navigate(href);
-                        });
-
-                    $('#GoToMovies', page).on('click',
-                        function () {
-                            var href = Dashboard.getConfigurationPageUrl("MoviePage");
-                            Dashboard.navigate(href);
-                        });
-
-
-                    $('#GoToShowProgress', page).on('click',
-                        function () {
-                            if (MainPage.tvdbCallFailed) {
-                                Dashboard.alert({
-                                    message:
-                                    'Last time the background calculation task ran it got an error from the TVDB API so no calculations could be made for the show progress. This is mostly because the TVDB server gave a 500 response. <br/><br/>You have to run the task again, if the problem persists wait a bit longer before running the task again.'
-                                });
-                            } else {
-                                var href = Dashboard.getConfigurationPageUrl("UserBasedShowOverview");
-                                Dashboard.navigate(href);
-                            }
-                        });
-
-                    MainPage.loadStats(page);
-                });
-            })();
-    </script>
     </div>
 </body>
 </html>
