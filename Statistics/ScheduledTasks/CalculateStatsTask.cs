@@ -66,9 +66,6 @@ namespace Statistics.ScheduledTasks
 
             // clear all previously saved stats
             PluginConfiguration.UserStats = new List<UserStat>();
-            PluginConfiguration.GeneralStat = new List<ValueGroup>();
-            PluginConfiguration.MovieStat = new List<ValueGroup>();
-            PluginConfiguration.ShowStat = new List<ValueGroup>();
             Plugin.Instance.SaveConfiguration();
 
             var ver = System.Reflection.Assembly.GetAssembly(typeof(CalculateStatsTask)).GetName().Version;
@@ -149,23 +146,23 @@ namespace Statistics.ScheduledTasks
                 PluginConfiguration.DayOfWeekChart = calculator.CalculateDayOfWeekForAllUsersChart();
                 PluginConfiguration.HourOfDayChart = calculator.CalculateHourForAllUsersChart();
 
-                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalMovies());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalBoxsets());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateTotalMovieStudios());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateBiggestMovie());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateLongestMovie());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateOldestMovie());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateNewestMovie());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateHighestRating());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateLowestRating());
-                PluginConfiguration.MovieStat.Add(calculator.CalculateNewestAddedMovie());
+                PluginConfiguration.TotalMovies = calculator.CalculateTotalMovies();
+                PluginConfiguration.TotalBoxsets = calculator.CalculateTotalBoxsets();
+                PluginConfiguration.TotalMovieStudios = calculator.CalculateTotalMovieStudios();
+                PluginConfiguration.BiggestMovie = calculator.CalculateBiggestMovie();
+                PluginConfiguration.LongestMovie = calculator.CalculateLongestMovie();
+                PluginConfiguration.OldestMovie = calculator.CalculateOldestMovie();
+                PluginConfiguration.NewestMovie = calculator.CalculateNewestMovie();
+                PluginConfiguration.HighestRating = calculator.CalculateHighestRating();
+                PluginConfiguration.LowestRating = calculator.CalculateLowestRating();
+                PluginConfiguration.NewestAddedMovie = calculator.CalculateNewestAddedMovie();
 
-                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalShows());
-                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalOwnedEpisodes());
-                PluginConfiguration.ShowStat.Add(calculator.CalculateTotalShowStudios());
-                PluginConfiguration.ShowStat.Add(calculator.CalculateBiggestShow());
-                PluginConfiguration.ShowStat.Add(calculator.CalculateLongestShow());
-                PluginConfiguration.ShowStat.Add(calculator.CalculateNewestAddedEpisode());
+                PluginConfiguration.TotalShows = calculator.CalculateTotalShows();
+                PluginConfiguration.TotalOwnedEpisodes = calculator.CalculateTotalOwnedEpisodes();
+                PluginConfiguration.TotalShowStudios = calculator.CalculateTotalShowStudios();
+                PluginConfiguration.BiggestShow = calculator.CalculateBiggestShow();
+                PluginConfiguration.LongestShow = calculator.CalculateLongestShow();
+                PluginConfiguration.NewestAddedEpisode = calculator.CalculateNewestAddedEpisode();
             }
 
             numComplete++;

@@ -502,48 +502,56 @@ namespace Statistics.Helpers
                 Title = Constants.BiggestMovie,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = biggestMovie.Id.ToString()
             };
         }
 
         public ValueGroup CalculateBiggestShow()
         {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
             var shows = GetAllSeries();
-
-            var biggestShow = new Series();
-            double maxSize = 0;
-            foreach (var show in shows)
+            if (shows.Any())
             {
-                var episodes = GetAllEpisodes().Where(x => x.SeriesId == show.Id && x.Path != null);
-                try
+                var biggestShow = new Series();
+                double maxSize = 0;
+                foreach (var show in shows)
                 {
-                    var showSize = episodes.Sum(x =>
+                    var episodes = GetAllEpisodes().Where(x => x.SeriesId == show.Id && x.Path != null);
+                    try
                     {
-                        var f = new FileInfo(x.Path);
-                        return f.Length;
-                    });
+                        var showSize = episodes.Sum(x =>
+                        {
+                            var f = new FileInfo(x.Path);
+                            return f.Length;
+                        });
 
-                    if (maxSize >= showSize) continue;
+                        if (maxSize >= showSize) continue;
 
-                    maxSize = showSize;
-                    biggestShow = show;
+                        maxSize = showSize;
+                        biggestShow = show;
+                    }
+                    catch (Exception e)
+                    {
+                        // ignored
+                    }
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
+
+                maxSize = maxSize / 1073741824; //Byte to Gb
+                valueLineOne = CheckMaxLength($"{maxSize:F1} Gb");
+                valueLineTwo = CheckMaxLength($"{biggestShow.Name}");
+                id = biggestShow.Id.ToString();
             }
-
-            maxSize = maxSize / 1073741824; //Byte to Gb
-            var valueLineOne = CheckMaxLength($"{maxSize:F1} Gb");
-            var valueLineTwo = CheckMaxLength($"{biggestShow.Name}");
-
             return new ValueGroup
             {
                 Title = Constants.BiggestShow,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
@@ -553,50 +561,68 @@ namespace Statistics.Helpers
 
         public ValueGroup CalculateLongestMovie()
         {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
             var movies = GetAllMovies();
 
-            var maxMovie = movies.Where(x => x.RunTimeTicks != null).OrderByDescending(x => x.RunTimeTicks).First();
-            var valueLineOne = CheckMaxLength(new TimeSpan(maxMovie.RunTimeTicks ?? 0).ToString(@"hh\:mm\:ss"));
-            var valueLineTwo = CheckMaxLength($"{maxMovie.Name}");
+            var maxMovie = movies.Where(x => x.RunTimeTicks != null).OrderByDescending(x => x.RunTimeTicks).FirstOrDefault();
+            if (maxMovie != null)
+            {
+                valueLineOne = CheckMaxLength(new TimeSpan(maxMovie.RunTimeTicks ?? 0).ToString(@"hh\:mm\:ss"));
+                valueLineTwo = CheckMaxLength($"{maxMovie.Name}");
+                id = maxMovie.Id.ToString();
+            }
             return new ValueGroup
             {
                 Title = Constants.LongestMovie,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
         public ValueGroup CalculateLongestShow()
         {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
             var shows = GetAllSeries();
 
-            var maxShow = new Series();
-            long maxTime = 0;
-            foreach (var show in shows)
+            if (shows.Any())
             {
-                var episodes = GetAllEpisodes().Where(x => x.SeriesId == show.Id && x.Path != null);
-                var showSize = episodes.Sum(x => x.RunTimeTicks ?? 0);
+                var maxShow = new Series();
+                long maxTime = 0;
+                foreach (var show in shows)
+                {
+                    var episodes = GetAllEpisodes().Where(x => x.SeriesId == show.Id && x.Path != null);
+                    var showSize = episodes.Sum(x => x.RunTimeTicks ?? 0);
 
-                if (maxTime >= showSize) continue;
+                    if (maxTime >= showSize) continue;
 
-                maxTime = showSize;
-                maxShow = show;
+                    maxTime = showSize;
+                    maxShow = show;
 
+                }
+
+                var time = new TimeSpan(maxTime).ToString(@"hh\:mm\:ss");
+
+                var days = CheckForPlural("day", new TimeSpan(maxTime).Days, "", "and");
+
+                valueLineOne = CheckMaxLength($"{days} {time}");
+                valueLineTwo = CheckMaxLength($"{maxShow.Name}");
+                id = maxShow.Id.ToString();
             }
 
-            var time = new TimeSpan(maxTime).ToString(@"hh\:mm\:ss");
-
-            var days = CheckForPlural("day", new TimeSpan(maxTime).Days, "", "and");
-
-            var valueLineOne = CheckMaxLength($"{days} {time}");
-            var valueLineTwo = CheckMaxLength($"{maxShow.Name}");
             return new ValueGroup
             {
                 Title = Constants.LongestShow,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
@@ -606,20 +632,26 @@ namespace Statistics.Helpers
 
         public ValueGroup CalculateOldestMovie()
         {
-            var movies = GetAllMovies();
-            var oldest = movies.Where(x => x.PremiereDate.HasValue && x.PremiereDate.Value > DateTime.MinValue).Aggregate((curMin, x) => (curMin == null || (x.PremiereDate ?? DateTime.MaxValue) < curMin.PremiereDate ? x : curMin));
-
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
-            if (oldest != null && oldest.PremiereDate.HasValue)
-            {
-                var oldestDate = oldest.PremiereDate.Value;
-                var numberOfTotalMonths = (DateTime.Now.Year - oldestDate.Year) * 12 + DateTime.Now.Month - oldestDate.Month;
-                var numberOfYears = Math.Floor(numberOfTotalMonths / (decimal)12);
-                var numberOfMonth = Math.Floor((numberOfTotalMonths / (decimal)12 - numberOfYears) * 12);
+            var id = "";
 
-                valueLineOne = CheckMaxLength($"{CheckForPlural("year", numberOfYears, "", "", false)} {CheckForPlural("month", numberOfMonth, "and")} ago");
-                valueLineTwo = CheckMaxLength($"{oldest.Name}");
+            var movies = GetAllMovies();
+            if (movies.Any())
+            {
+                var oldest = movies.Where(x => x.PremiereDate.HasValue && x.PremiereDate.Value > DateTime.MinValue).Aggregate((curMin, x) => (curMin == null || (x.PremiereDate ?? DateTime.MaxValue) < curMin.PremiereDate ? x : curMin));
+
+                if (oldest != null && oldest.PremiereDate.HasValue)
+                {
+                    var oldestDate = oldest.PremiereDate.Value;
+                    var numberOfTotalMonths = (DateTime.Now.Year - oldestDate.Year) * 12 + DateTime.Now.Month - oldestDate.Month;
+                    var numberOfYears = Math.Floor(numberOfTotalMonths / (decimal)12);
+                    var numberOfMonth = Math.Floor((numberOfTotalMonths / (decimal)12 - numberOfYears) * 12);
+
+                    valueLineOne = CheckMaxLength($"{CheckForPlural("year", numberOfYears, "", "", false)} {CheckForPlural("month", numberOfMonth, "and")} ago");
+                    valueLineTwo = CheckMaxLength($"{oldest.Name}");
+                    id = oldest.Id.ToString();
+                }
             }
             
             return new ValueGroup()
@@ -627,25 +659,32 @@ namespace Statistics.Helpers
                 Title = Constants.OldesPremieredtMovie,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
         public ValueGroup CalculateNewestMovie()
         {
-            var movies = GetAllMovies();
-            var youngest = movies.Where(x => x.PremiereDate.HasValue).Aggregate((curMax, x) => (curMax == null || (x.PremiereDate ?? DateTime.MinValue) > curMax.PremiereDate ? x : curMax));
-
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
-            if (youngest != null)
+            var id = "";
+
+            var movies = GetAllMovies();
+            if (movies.Any())
             {
-                var numberOfTotalDays = DateTime.Now.Date - youngest.PremiereDate.Value;
-                valueLineOne = CheckMaxLength(numberOfTotalDays.Days == 0
-                        ? $"Today"
-                        : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
-                
-                valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                var youngest = movies.Where(x => x.PremiereDate.HasValue).Aggregate((curMax, x) => (curMax == null || (x.PremiereDate ?? DateTime.MinValue) > curMax.PremiereDate ? x : curMax));
+
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now.Date - youngest.PremiereDate.Value;
+                    valueLineOne = CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? $"Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+
+                    valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                    id = youngest.Id.ToString();
+                }
             }
 
             return new ValueGroup()
@@ -653,27 +692,34 @@ namespace Statistics.Helpers
                 Title = Constants.NewestPremieredMovie,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
         public ValueGroup CalculateNewestAddedMovie()
         {
-            var movies = GetAllMovies();
-            var youngest = movies.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
-
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
-            if (youngest != null)
+            var id = "";
+
+            var movies = GetAllMovies();
+            if (movies.Any())
             {
-                var numberOfTotalDays = DateTime.Now - youngest.DateCreated;
+                var youngest = movies.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
 
-                valueLineOne =
-                    CheckMaxLength(numberOfTotalDays.Days == 0
-                        ? $"Today"
-                        : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now - youngest.DateCreated;
 
-                valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                    valueLineOne =
+                        CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? $"Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+
+                    valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                    id = youngest.Id.ToString();
+                }
             }
 
             return new ValueGroup()
@@ -681,28 +727,35 @@ namespace Statistics.Helpers
                 Title = Constants.NewestAddedMovie,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
         public ValueGroup CalculateNewestAddedEpisode()
         {
-            var episodes = GetAllOwnedEpisodes();
-            var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
-
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
-            if (youngest != null)
+            var id = "";
+
+            var episodes = GetAllOwnedEpisodes();
+            if (episodes.Any())
             {
-                var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated;
+                var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
+                
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated;
 
-                valueLineOne =
-                    CheckMaxLength(numberOfTotalDays.Days == 0
-                        ? $"Today"
-                        : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+                    valueLineOne =
+                        CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? $"Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
 
-                valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    id = youngest.Id.ToString();
+                }
             }
 
             return new ValueGroup()
@@ -710,7 +763,8 @@ namespace Statistics.Helpers
                 Title = Constants.NewestAddedEpisode,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
@@ -725,9 +779,11 @@ namespace Statistics.Helpers
 
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
+            var id = "";
             if (highestRatedMovie != null) {
                 valueLineOne = CheckMaxLength($"{highestRatedMovie.CommunityRating} / 10");
                 valueLineTwo = CheckMaxLength($"{highestRatedMovie.Name}");
+                id = highestRatedMovie.Id.ToString();
             }
 
             return new ValueGroup()
@@ -735,7 +791,8 @@ namespace Statistics.Helpers
                 Title = Constants.HighestMovieRating,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
@@ -746,10 +803,12 @@ namespace Statistics.Helpers
 
             var valueLineOne = Constants.NoData;
             var valueLineTwo = "";
+            var id = "";
             if (lowestRatedMovie != null)
             {
                 valueLineOne = CheckMaxLength($"{lowestRatedMovie.CommunityRating} / 10");
                 valueLineTwo = CheckMaxLength($"{lowestRatedMovie.Name}");
+                id = lowestRatedMovie.Id.ToString();
             }
 
             return new ValueGroup()
@@ -757,7 +816,8 @@ namespace Statistics.Helpers
                 Title = Constants.LowestMovieRating,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
-                Size = "half"
+                Size = "half",
+                Id = id
             };
         }
 
@@ -800,7 +860,7 @@ namespace Statistics.Helpers
 
             return chartValues;
         }
-
+         
         public ChartModel CalculateHourForAllUsersChart()
         {
             var chartValues = new ChartModel(new[]{ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
@@ -833,7 +893,7 @@ namespace Statistics.Helpers
 
         private string CheckMaxLength(string value)
         {
-            if (value.Length > 30)
+            if (value.Length > 30) 
                 return value.Substring(0, 27) + "...";
             return value;;
         }

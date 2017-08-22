@@ -176,7 +176,7 @@ namespace Statistics.Helpers
                 DtoOptions = new DtoOptions(false)
                 {
                     EnableImages = false,
-                    Fields = new List<ItemFields>
+                    Fields = new[]
                     {
                         ItemFields.DateCreated,
                         ItemFields.Studios
@@ -198,7 +198,7 @@ namespace Statistics.Helpers
                 DtoOptions = new DtoOptions(false)
                 {
                     EnableImages = false,
-                    Fields = new List<ItemFields>
+                    Fields = new[]
                     {
                         ItemFields.DateCreated,
                         ItemFields.Studios

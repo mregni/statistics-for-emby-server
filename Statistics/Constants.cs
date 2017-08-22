@@ -50,6 +50,6 @@
         internal const string HelpUserToMovieYears = "Top 5 years the user watched movies.";
         internal const string HelpUserTopMovieGenres = "Top 5 movie genres the user watched.";
         internal const string HelpUserTopShowGenres = "Top 5 show genres the user watched.";
-        internal const string NoData = "NO DATA FOUND!";
+        internal const string NoData = "NO DATA!";
     }
 }

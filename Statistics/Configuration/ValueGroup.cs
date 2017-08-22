@@ -9,6 +9,7 @@
         public string Size { get; set; }
         public object Raw { get; set; }
         public string ExtraInformation { get; set; }
+        public string Id { get; set; }
 
         public ValueGroup()
         {
