@@ -61,9 +61,13 @@
     <Compile Include="Helpers\ShowProgressCalculator.cs" />
     <Compile Include="Models\Chart\ChartValueModel.cs" />
     <Compile Include="Models\LastSeenModel.cs" />
+    <Compile Include="Models\Movie.cs" />
+    <Compile Include="Models\MovieQuality.cs" />
     <Compile Include="Models\VideoQualityModel.cs" />
     <Compile Include="Models\Chart\ChartModel.cs" />
     <Compile Include="Pages\ConfigurationPage.cs" />
+    <EmbeddedResource Include="Pages\MoviesPage.html" />
+    <Compile Include="Pages\MoviesPage.cs" />
     <Compile Include="Pages\UserBasedStatistics.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Pages\UserBasedShowOverview.cs" />

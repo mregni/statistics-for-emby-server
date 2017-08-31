@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistics</title>
+</head>
+<body>
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <div data-role="page" class="page type-interior pluginConfigurationPage MoviesPage" data-require="emby-button,emby-select">
+        <div data-role="content">
+            <div class="content-primary">
+                <h1>Movie list</h1>
+                <div style="max-width: 900px;">
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" onclick="Emby.Page.back();">Go back</button>
+                </div>
+
+                <h2 id="unkTitle">Unknown</h2>
+                <div id="unk"></div>
+                <h2 id="dvdTitle">DVD</h2>
+                <div id="dvd"></div>
+                <h2 id="Q700Title">480P</h2>
+                <div id="Q700"></div>
+                <h2 id="Q1260Title">720P</h2>
+                <div id="Q1260"></div>
+                <h2 id="Q1900Title">1080P</h2>
+                <div id="Q1900"></div>
+                <h2 id="Q2500Title">1440P</h2>
+                <div id="Q2500"></div>
+                <h2 id="Q3800Title">4K</h2>
+                <div id="Q3800"></div>
+            </div>
+        </div>
+        <style>
+            img {
+                padding: 5px;
+            }
+        </style>
+
+        
+        <script type="text/javascript">
+            function showInfo(text, title) {
+                Dashboard.alert({ message: text, title: title });
+            }
+
+            (function () {
+                var MoviesPage = {
+                    pluginId: '291d866f-baad-464a-aed6-a4a8b95a8fd7',
+                    loadStats: function (page) {
+                        Dashboard.showLoadingMsg();
+                        ApiClient.getPluginConfiguration(MoviesPage.pluginId).then(function (config) {
+                            $("#unkTitle").append(" (" + config.MovieQualityItems[0].Movies.length + ")")
+                            $("#dvdTitle").append(" (" + config.MovieQualityItems[1].Movies.length + ")")
+                            $("#Q700Title").append(" (" + config.MovieQualityItems[2].Movies.length + ")")
+                            $("#Q1260Title").append(" (" + config.MovieQualityItems[3].Movies.length + ")")
+                            $("#Q1900Title").append(" (" + config.MovieQualityItems[4].Movies.length + ")")
+                            $("#Q2500Title").append(" (" + config.MovieQualityItems[5].Movies.length + ")")
+                            $("#Q3800Title").append(" (" + config.MovieQualityItems[6].Movies.length + ")")
+
+                            $.each(config.MovieQualityItems[0].Movies, function (i, v) { $("#unk", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[1].Movies, function (i, v) { $("#dvd", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[2].Movies, function (i, v) { $("#Q700", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[3].Movies, function (i, v) { $("#Q1260", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[4].Movies, function (i, v) { $("#Q1900", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[5].Movies, function (i, v) { $("#Q2500", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            $.each(config.MovieQualityItems[6].Movies, function (i, v) { $("#Q3800", page)
+                                .append('<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="200px" alt="' +  v.Name + '" /></a>'); });
+                            Dashboard.hideLoadingMsg();
+                        });
+                    }
+                };
+
+                $('.MoviesPage').on('pageshow', function (event) {
+                    MoviesPage.loadStats(this);
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>

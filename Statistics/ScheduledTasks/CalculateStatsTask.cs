@@ -163,6 +163,8 @@ namespace Statistics.ScheduledTasks
                 PluginConfiguration.BiggestShow = calculator.CalculateBiggestShow();
                 PluginConfiguration.LongestShow = calculator.CalculateLongestShow();
                 PluginConfiguration.NewestAddedEpisode = calculator.CalculateNewestAddedEpisode();
+
+                PluginConfiguration.MovieQualityItems = calculator.CalculateMovieQualityList();
             }
 
             numComplete++;

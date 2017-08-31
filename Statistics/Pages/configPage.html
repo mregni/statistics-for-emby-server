@@ -20,11 +20,13 @@
                 <div class="statRow" id="generalStat"></div>
 
                 <h2>Movie statistics</h2>
-                
+                <div style="max-width: 900px;">
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToMovieList">View movie list</button>
+                </div>
 
                 <div class="statRow" id="movieStat"></div>
                 <div style="clear: both;"></div>
-                <div class="statRow">
+                <!-- <div class="statRow">
                     <div class="col large">
                         <h3>Movies watched per day of the week</h3>
                         <canvas id="weekMovieChart" width="400" height="200"></canvas>
@@ -33,7 +35,7 @@
                         <h3>Movies watched per day of the week</h3>
                         <canvas id="dayMovieChart" width="400" height="200"></canvas>
                     </div>
-                </div>
+                </div>-->
                 <div style="clear: both;"></div>
 
 
@@ -43,7 +45,7 @@
                 </div>
                 <div class="statRow" id="showStat"></div>
                 <div style="clear: both;"></div>
-                <div class="statRow">
+                <!-- <div class="statRow">
                     <div class="col large">
                         <h3>Episodes watched per day of the week</h3>
                         <canvas id="weekEpisodesChart" width="400" height="200"></canvas>
@@ -52,12 +54,16 @@
                         <h3>Episodes watched per hour of the day</h3>
                         <canvas id="dayEpisodesChart" width="400" height="200"></canvas>
                     </div>
-                </div>
+                </div>-->
                 <div style="clear: both;"></div>
             </div>
         </div>
 
     <style>
+
+            img {
+                padding: 0px;
+            }
             .statCard-stats-title, statCard-stats-title-left {
                 font-size: 1rem;
                 padding-bottom: 5px;
@@ -152,7 +158,7 @@
                 }
 
                     .statRow .col.medium .statCard-content, .statRow .col.large .statCard-content {
-                        min-height: 210px;
+                        min-height: 250px;
                     }
 
                 .statRow .col.large {
@@ -277,7 +283,7 @@
                                 "');\"><i class=\"md-icon\">info_outline</i></div>";
 
                         if(v.Id !== undefined){
-                            html += '<img src="/Items/' + v.Id + '/Images/Primary" height="105px">'
+                            html += '<a href=/web/itemdetails.html?id=' + v.Id + '><img src="/Items/' + v.Id + '/Images/Primary" height="105px"></a>'
                             html += '<div>'
                         }
 
@@ -345,8 +351,8 @@
                                     episodes.push(v.Episodes);
                                 });
 
-                                MainPage.buildChart(keys, movies, '# of views per day', 'weekMovieChart');
-                                MainPage.buildChart(keys, episodes, '# of views per day', 'weekEpisodesChart');
+                                //MainPage.buildChart(keys, movies, '# of views per day', 'weekMovieChart');
+                                //MainPage.buildChart(keys, episodes, '# of views per day', 'weekEpisodesChart');
 
                                 keys = [];
                                 movies = [];
@@ -357,8 +363,8 @@
                                     episodes.push(v.Episodes);
                                 });
 
-                                MainPage.buildChart(keys, movies, '# of views per hour', 'dayMovieChart');
-                                MainPage.buildChart(keys, episodes, '# of views per hour', 'dayEpisodesChart');
+                                //MainPage.buildChart(keys, movies, '# of views per hour', 'dayMovieChart');
+                                //MainPage.buildChart(keys, episodes, '# of views per hour', 'dayEpisodesChart');
 
                                 Dashboard.hideLoadingMsg();
                             }
@@ -407,13 +413,7 @@
                             Dashboard.navigate(href);
                         });
 
-                    $('#GoToMovieQuality', page).on('click',
-                        function () {
-                            var href = Dashboard.getConfigurationPageUrl("MovieQualityPage");
-                            Dashboard.navigate(href);
-                        });
-
-                    $('#GoToMovies', page).on('click',
+                    $('#GoToMovieList', page).on('click',
                         function () {
                             var href = Dashboard.getConfigurationPageUrl("MoviePage");
                             Dashboard.navigate(href);

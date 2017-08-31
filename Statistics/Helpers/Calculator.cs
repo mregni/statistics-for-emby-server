@@ -234,7 +234,7 @@ namespace Statistics.Helpers
             return new ValueGroup
             {
                 Title = Constants.TotalMovies,
-                ValueLineOne = $"{GetOwnedCount(typeof(Movie))}",
+                ValueLineOne = $"{GetOwnedCount(typeof(MediaBrowser.Controller.Entities.Movies.Movie))}",
                 ValueLineTwo = "",
                 ExtraInformation = User != null ? Constants.HelpUserTotalMovies : null
             };
@@ -276,7 +276,7 @@ namespace Statistics.Helpers
         public ValueGroup CalculateTotalMoviesWatched()
         {
             var viewedMoviesCount = GetAllViewedMoviesByUser().Count();
-            var totalMoviesCount = GetOwnedCount(typeof(Movie));
+            var totalMoviesCount = GetOwnedCount(typeof(MediaBrowser.Controller.Entities.Movies.Movie));
 
             var percentage = decimal.Zero;
             if (totalMoviesCount > 0)
@@ -414,7 +414,7 @@ namespace Statistics.Helpers
                     .Select(x => x != null ? x.Width : 0)
                     .ToList();
 
-            var ceilings = new[] { 3800, 2500, 1900, 1260, 700 };
+            var ceilings = new[] { 3800, 2500, 1900, 1260, 700, 10 };
             var moGroupings = moWidths.GroupBy(item => ceilings.FirstOrDefault(ceiling => ceiling < item)).ToList();
             var epGroupings = epWidths.GroupBy(item => ceilings.FirstOrDefault(ceiling => ceiling < item)).ToList();
 
@@ -422,9 +422,15 @@ namespace Statistics.Helpers
             {
                 new VideoQualityModel
                 {
-                    Quality = VideoQuality.DVD,
+                    Quality = VideoQuality.UNKNOWN,
                     Movies = moGroupings.FirstOrDefault(x => x.Key == 0)?.Count() ?? 0,
                     Episodes = epGroupings.FirstOrDefault(x => x.Key == 0)?.Count() ?? 0
+                },
+                new VideoQualityModel
+                {
+                    Quality = VideoQuality.DVD,
+                    Movies = moGroupings.FirstOrDefault(x => x.Key == 10)?.Count() ?? 0,
+                    Episodes = epGroupings.FirstOrDefault(x => x.Key == 10)?.Count() ?? 0
                 },
                 new VideoQualityModel
                 {
@@ -467,6 +473,55 @@ namespace Statistics.Helpers
             };
         }
 
+        public List<MovieQuality> CalculateMovieQualityList()
+        {
+            var movies = GetAllMovies();
+            var list = new List<MovieQuality>()
+            {
+
+                new MovieQuality() { Quality = VideoQuality.UNKNOWN, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.DVD, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.Q700, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.Q1260, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.Q1900, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.Q2500, Movies = new List<Models.Movie>() },
+                new MovieQuality() { Quality = VideoQuality.Q3800, Movies = new List<Models.Movie>() }
+            };
+            var listDVD = new List<Models.Movie>();
+            foreach (var movie in movies.OrderBy(x => x.SortName))
+            {
+                if ((movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width ?? 0) == 0)
+                {
+                    list[0].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if(movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 700)
+                {
+                    list[1].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 1260)
+                {
+                    list[2].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 1900)
+                {
+                    list[3].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 2500)
+                {
+                    list[4].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 3800)
+                {
+                    list[5].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+                else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width >= 3800)
+                {
+                    list[6].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                }
+            }
+
+            return list;
+        }
         #endregion
 
         #region Size
@@ -475,7 +530,7 @@ namespace Statistics.Helpers
         {
             var movies = GetAllMovies();
 
-            var biggestMovie = new Movie();
+            var biggestMovie = new MediaBrowser.Controller.Entities.Movies.Movie();
             double maxSize = 0;
             foreach (var movie in movies)
             {

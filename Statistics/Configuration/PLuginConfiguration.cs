@@ -4,6 +4,7 @@ using MediaBrowser.Model.Plugins;
 using Statistics.Api;
 using Statistics.Models.Chart;
 using Statistics.ViewModel;
+using Statistics.Models;
 
 namespace Statistics.Configuration
 {
@@ -43,6 +44,8 @@ namespace Statistics.Configuration
         public ChartModel HourOfDayChart { get; set; }
         public string LastUpdated { get; set; }
         public string Version { get; set; }
+
+        public List<MovieQuality> MovieQualityItems{ get; set; }
 
         public UpdateModel TotalEpisodeCounts { get; set; }
         public bool IsTheTvdbCallFailed { get; set; }
