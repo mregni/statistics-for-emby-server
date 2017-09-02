@@ -23,6 +23,9 @@
                 <div style="max-width: 900px;">
                     <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToMovieList">View movie list</button>
                 </div>
+                <div style="max-width: 900px;">
+                    <button is="emby-button" type="button" class="raised button-cancel block emby-button" id="GoToMovieTextList">View movie list (text based)</button>
+                </div>
 
                 <div class="statRow" id="movieStat"></div>
                 <div style="clear: both;"></div>
@@ -35,7 +38,7 @@
                         <h3>Movies watched per day of the week</h3>
                         <canvas id="dayMovieChart" width="400" height="200"></canvas>
                     </div>
-                </div>-->
+                </div>--> 
                 <div style="clear: both;"></div>
 
 
@@ -419,6 +422,11 @@
                             Dashboard.navigate(href);
                         });
 
+                    $('#GoToMovieTextList', page).on('click',
+                        function () {
+                            var href = Dashboard.getConfigurationPageUrl("MovieListPage");
+                            Dashboard.navigate(href);
+                        });
 
                     $('#GoToShowProgress', page).on('click',
                         function () {

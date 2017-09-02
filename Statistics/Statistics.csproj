@@ -67,6 +67,8 @@
     <Compile Include="Models\Chart\ChartModel.cs" />
     <Compile Include="Pages\ConfigurationPage.cs" />
     <EmbeddedResource Include="Pages\MoviesPage.html" />
+    <EmbeddedResource Include="Pages\MovieListPage.html" />
+    <Compile Include="Pages\MovieListPage.cs" />
     <Compile Include="Pages\MoviesPage.cs" />
     <Compile Include="Pages\UserBasedStatistics.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />

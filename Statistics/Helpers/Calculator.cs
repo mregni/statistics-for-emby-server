@@ -492,31 +492,31 @@ namespace Statistics.Helpers
             {
                 if ((movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width ?? 0) == 0)
                 {
-                    list[0].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[0].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if(movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 700)
                 {
-                    list[1].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[1].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 1260)
                 {
-                    list[2].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[2].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 1900)
                 {
-                    list[3].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[3].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 2500)
                 {
-                    list[4].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[4].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width < 3800)
                 {
-                    list[5].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[5].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
                 else if (movie.GetMediaStreams().FirstOrDefault(s => s.Type == MediaStreamType.Video)?.Width >= 3800)
                 {
-                    list[6].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name });
+                    list[6].Movies.Add(new Models.Movie() { Id = movie.Id.ToString(), Name = movie.Name, Year = movie.ProductionYear });
                 }
             }
 
