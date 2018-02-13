@@ -1,3 +1,6 @@
+!!DEPRECATED!!
+Use the new CORE version ==> https://github.com/mregni/statistics-for-emby-server-CORE
+
 # Statistics plugin for Emby Server
 ![alt text](https://github.com/mregni/statistics-for-emby-server/blob/master/Statistics/Images/statistics-thumb.png?raw=true)
 
